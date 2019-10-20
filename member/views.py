@@ -1,0 +1,173 @@
+from django.core.paginator import Paginator
+from django.http import QueryDict
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework import status, viewsets
+
+from .serializer import *
+from .models import *
+
+from itertools import chain
+
+
+class MembersCrudViewSet(viewsets.ModelViewSet):
+    queryset = Members.objects.all()
+    serializer_class = ReadMemberSerializer
+
+
+class TeamsCrudViewSet(viewsets.ModelViewSet):
+    queryset = Team.objects.all()
+    serializer_class = ReadTeamSerializer
+    # http_method_names = ['get', 'post', 'put']
+    # def put(self, request):
+    #     super()
+
+
+class MemberShipViewSet(viewsets.ModelViewSet):
+    queryset = Membership.objects.all()
+    serializer_class = MemberShipSerializer
+    # http_method_names = ['get', 'post', 'put']
+    # def put(self, request):
+    #     super()
+
+
+class MemberTeamsView(APIView):
+    def get(self, request):
+        data = request.GET
+        member = Members.objects.get(id=data['id'])
+        membership = Membership.objects.filter(member=member)
+        teams = QueryDict()
+        for m in membership:
+            team = Team.objects.filter(id=m.team.id)
+            teams = list(chain(teams, team))
+        serializer = ReadTeamSerializer(instance=teams, many=True)
+        return Response(
+            {
+                'data': serializer.data
+            },
+            status=status.HTTP_200_OK
+        )
+
+
+
+
+
+
+
+
+
+
+class Member(APIView):
+
+    #read member
+    def get(self, request):
+        members = Members.objects.all()
+        serializer = ReadMemberSerializer(instance=members, many=True)
+        return Response(
+            {
+                'data': serializer.data
+            },
+            status=status.HTTP_200_OK
+        )
+
+    # create member
+    def post(self, request):
+        data = request.data
+        serializer = AddMemberSerializer(data=data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(
+                {
+                    'data': serializer.data
+                },
+                status=status.HTTP_201_CREATED
+            )
+
+        else:
+            return Response(
+                {
+                    'data': "serializer is NOT valid"
+                },
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+    # update member
+    def put(self, request):
+        data = request.data
+        member = Members.objects.get(id=data['member_id'])
+        serializer = EditMemberDataSerializer(instance=member, data=data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(
+                {
+                    'data': serializer.data
+                },
+                status=status.HTTP_201_CREATED
+            )
+
+        else:
+            return Response(
+                {
+                    'data': "serializer is NOT valid"
+                },
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+    # delete member
+    def delete(self, request):
+        data = request.data
+        try:
+            member = Members.objects.get(id=data['member_id'])
+            member.delete()
+            return Response(
+                {
+                    'msg': 'member deleted!'
+                },
+                status=status.HTTP_200_OK
+            )
+        except Members.DoesNotExist:
+            return Response(
+                {
+                    'msg' : 'member does NOT exist!'
+                },
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+class TeamsView(APIView):
+
+    def get(self, request):
+        teams = Team.objects.all()
+        serializer = ReadTeamSerializer(instance=teams, many=True)
+        return Response(
+            {
+                'data': serializer.data
+            },
+            status=status.HTTP_200_OK
+        )
+
+    def post(self, request):
+        data = request.data
+        serializer = CreateTeamSerializer(data=data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(
+                {
+                    'data': serializer.data
+                },
+                status=status.HTTP_201_CREATED
+            )
+
+        else:
+            return Response(
+                {
+                    'data': "serializer is NOT valid"
+                },
+                status=status.HTTP_400_BAD_REQUEST
+            )
+    def put(self, request):
+        pass
+
+    def delete(self, request):
+        pass
+
+
