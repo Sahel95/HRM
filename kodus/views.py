@@ -47,9 +47,9 @@ class KudosTransfer(APIView):
 
 
 class MemberKudosView(APIView):
-    def get(self, request):
+    def get(self, request, id):
         data = request.GET
-        member = Members.objects.get(id=data['id'])
+        member = Members.objects.get(id=id)
         serializer = MemberKudosSerializer(instance=member)
         return Response(
             {
@@ -98,7 +98,6 @@ class AddDailyKudos(APIView):
                 elif r.role == 1:
                     member.available_point = member.available_point + DAILY_MANAGER_KUDOS
                     member.save()
-
         return Response(
             {'message': ' Kudos Donated! '},
             status=status.HTTP_200_OK

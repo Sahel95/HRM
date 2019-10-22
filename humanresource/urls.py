@@ -22,10 +22,10 @@ from kodus.views import KudosViewSet
 from member.views import MembersCrudViewSet, TeamsCrudViewSet, MemberShipViewSet
 
 router = routers.DefaultRouter()
-router.register('crud-kudos', KudosViewSet)
-router.register('crud-member', MembersCrudViewSet)
-router.register('crud-team', TeamsCrudViewSet)
-router.register('crud-membership', MemberShipViewSet)
+router.register('kudos', KudosViewSet)
+router.register('members', MembersCrudViewSet)
+router.register('teams', TeamsCrudViewSet)
+router.register('membership', MemberShipViewSet)
 
 urlpatterns = [
     url(r'^', include(router.urls)),
