@@ -16,14 +16,16 @@ from humanresource.settings import DAILY_MANAGER_KUDOS, DAILY_EMPLOYEE_KUDOS
 from member.serializer import ReadTeamSerializer
 
 
+from rest_framework.permissions import IsAuthenticated, AllowAny
+
+
+
 class KudosTransfer(APIView):
     def post(self, request):
         serializer = kudosTransfer(data=request.data)
         if serializer.is_valid():
             u = Members.objects.get(id=request.data['from_member'])
-            print('from_member',u.first_name)
-            print('from_member',u.available_point)
-            print('from_member',request.data['value'])
+
             x = int(float(request.data['value']))
             if u.available_point >= x:
                 serializer.save()
@@ -47,13 +49,14 @@ class KudosTransfer(APIView):
 
 
 class MemberKudosView(APIView):
-    def get(self, request, id):
-        data = request.GET
-        member = Members.objects.get(id=id)
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        member = Members.objects.get(id=request.user.id)
         serializer = MemberKudosSerializer(instance=member)
         return Response(
             {
-                'data' : serializer.data
+                'data': serializer.data
             },
             status=status.HTTP_200_OK
         )

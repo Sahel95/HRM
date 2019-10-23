@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     'kpi',
     'kodus',
     'rest_framework',
+    'rest_framework.authtoken',
 ]
 
 MIDDLEWARE = [
@@ -111,6 +112,17 @@ AUTH_PASSWORD_VALIDATORS = [
 #     ]
 # }
 
+REST_FRAMEWORK = {
+    # 'DEFAULT_AUTHENTICATION_CLASSES': [
+    #     'rest_framework_simplejwt.authentication.JWTAuthentication',
+    # ],
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework.authentication.TokenAuthentication',
+    ),
+    'DEFAULT_PERMISSION_CLASSES': (
+        'rest_framework.permissions.IsAuthenticated',)
+}
+
 # Internationalization
 # https://docs.djangoproject.com/en/2.2/topics/i18n/
 
@@ -131,7 +143,7 @@ USE_TZ = True
 STATIC_URL = '/static/'
 
 BASE_URL = 'http://127.0.0.1:8000'
-AUTH_USER_MODEL = 'member.Members'
+# AUTH_USER_MODEL = 'member.Members'
 
 
 # Add Daily Kudos

@@ -23,6 +23,7 @@ class AddMemberSerializer(serializers.ModelSerializer):
             national_code=validated_data['national_code'],
             username=validated_data['national_code']
         )
+        m.set_password(validated_data['national_code'])
         m.save()
         return m
 

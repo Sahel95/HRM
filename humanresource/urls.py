@@ -22,7 +22,7 @@ from kodus.views import KudosViewSet
 from member.views import MembersCrudViewSet, TeamsCrudViewSet, MemberShipViewSet
 
 router = routers.DefaultRouter()
-router.register('kudos', KudosViewSet)
+router.register('system/kudos', KudosViewSet)
 router.register('members', MembersCrudViewSet)
 router.register('teams', TeamsCrudViewSet)
 router.register('membership', MemberShipViewSet)

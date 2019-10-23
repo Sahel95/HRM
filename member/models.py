@@ -1,6 +1,6 @@
 from django.db import models
 from django_enumfield import enum
-from django.contrib.auth.models import AbstractUser
+from django.contrib.auth.models import AbstractUser, User
 from datetime import date
 
 
@@ -15,7 +15,7 @@ class Rules(enum.Enum):
     MANAGER = 1
 
 
-class Members(AbstractUser):
+class Members(User):
     national_code = models.IntegerField(null=True, blank=True)
     position = enum.EnumField(Position, default=Position.FRONTEND_DEVELOPER)
     tel = models.IntegerField(null=True, blank=True)
@@ -34,3 +34,5 @@ class Membership(models.Model):
     member = models.ForeignKey(Members, on_delete=models.CASCADE)
     team = models.ForeignKey(Team, on_delete=models.CASCADE)
     role = enum.EnumField(Rules, default=Rules.EMPLOYEE)
+
+
