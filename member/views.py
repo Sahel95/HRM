@@ -84,6 +84,19 @@ class LoginView(APIView):
         )
 
 
+class TeamOfManagerView(APIView):
+    def get(self, request):
+        manager = Members.objects.get(id=request.user.id)
+        team = Team.objects.filter(manager=manager)
+        serializer = ReadTeamSerializer(instance=team, many=True)
+        return Response(
+            {
+                'data': serializer.data
+            },
+            status=status.HTTP_200_OK
+        )
+
+
 class Member(APIView):
     permission_classes = [AllowAny]
 

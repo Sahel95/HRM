@@ -4,24 +4,19 @@ from member.models import *
 
 from datetime import datetime
 
-class kudosTransfer (serializers.Serializer):
-    from_member = serializers.IntegerField(min_value=1)
+
+class KudosTransferSerializer (serializers.Serializer):
     to_member = serializers.IntegerField(min_value=1)
     value = serializers.IntegerField(min_value=1)
 
     def create(self, validated_data):
-        from_member = Members.objects.get(id=validated_data['from_member'])
         to_member = Members.objects.get(id=validated_data['to_member'])
-        print('to_member', to_member.first_name)
-
         k = Kudos(
-            from_member=from_member,
+            from_member=self.context['from_member'],
             to_member=to_member,
             value=validated_data['value']
             )
         k.save()
-        from_member.available_point = from_member.available_point - validated_data['value']
-        from_member.save()
         to_member.kudos = to_member.kudos + validated_data['value']
         to_member.save()
         return k

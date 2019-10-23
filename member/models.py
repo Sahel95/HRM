@@ -35,4 +35,5 @@ class Membership(models.Model):
     team = models.ForeignKey(Team, on_delete=models.CASCADE)
     role = enum.EnumField(Rules, default=Rules.EMPLOYEE)
 
-
+    class Meta:
+        unique_together = ('member', 'team',)

@@ -1,34 +1,30 @@
-from django.shortcuts import render
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework import viewsets
+from rest_framework.permissions import IsAuthenticated, AllowAny
 
 
 from django.core.paginator import Paginator
-from datetime import date
 from django.db.models import Q
 
 
 from kodus.serializer import *
 from member.models import *
 from humanresource.settings import DAILY_MANAGER_KUDOS, DAILY_EMPLOYEE_KUDOS
-from member.serializer import ReadTeamSerializer
-
-
-from rest_framework.permissions import IsAuthenticated, AllowAny
-
 
 
 class KudosTransfer(APIView):
     def post(self, request):
-        serializer = kudosTransfer(data=request.data)
+        from_member = Members.objects.get(id=request.user.id)
+        serializer = KudosTransferSerializer(data=request.data, context={'from_member': from_member})
         if serializer.is_valid():
-            u = Members.objects.get(id=request.data['from_member'])
-
+            u = Members.objects.get(id=request.user.id)
             x = int(float(request.data['value']))
             if u.available_point >= x:
                 serializer.save()
+                from_member.available_point = from_member.available_point - request.data['value']
+                from_member.save()
                 return Response(
                     {'message': 'Kudos Sent!',
                      # 'data': serializer.data
@@ -65,7 +61,7 @@ class MemberKudosView(APIView):
 class KudosTransaction(APIView):
     def get(self, request):
         data = request.GET
-        member = Members.objects.get(id=data['id'])
+        member = Members.objects.get(id=request.user.id)
         from_date = data.get('from_date', member.date_joined.date())
         to_date = data.get('to_date', date.today())
         kudos = Kudos.objects.filter(
@@ -110,20 +106,6 @@ class AddDailyKudos(APIView):
 class KudosViewSet(viewsets.ModelViewSet):
     queryset = Kudos.objects.all()
     serializer_class = KudosTransactionSerializer
-
-
-class TeamOfManagerView(APIView):
-    def get(self, request):
-        data = request.GET
-        manager = Members.objects.get(id=data['id'])
-        team = Team.objects.filter(manager=manager)
-        serializer = ReadTeamSerializer(instance=team, many=True)
-        return Response(
-            {
-                'data': serializer.data
-            },
-            status=status.HTTP_200_OK
-        )
 
 
 class ViewMemberKudosByManagerView(APIView):
