@@ -3,6 +3,24 @@ from rest_framework import serializers
 from member.models import *
 
 
+class LoggedInUserDetailSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Members
+        fields = ['id', 'kudos', 'available_point', 'kpi_rate', 'first_name', 'last_name', 'position']
+
+
+class KudosReceptorSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Members
+        fields = ['id', 'first_name', 'last_name']
+
+
+class MemberDetailSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Members
+        fields = ['id', 'first_name', 'last_name']
+
+
 class ReadMemberSerializer(serializers.ModelSerializer):
     class Meta:
         model = Members

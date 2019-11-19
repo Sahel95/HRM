@@ -212,3 +212,27 @@ class TeamsView(APIView):
         pass
 
 
+class MemberForKudosTransfer(APIView):
+
+    # read member
+    def get(self, request):
+        members = Members.objects.all()
+        serializer = KudosReceptorSerializer(instance=members, many=True)
+        return Response(
+            {
+                'data': serializer.data
+            },
+            status=status.HTTP_200_OK
+        )
+
+
+class LogedInUserDetail(APIView):
+    def get(self, request):
+        member = Members.objects.get(id=request.user.id)
+        serializer = LoggedInUserDetailSerializer(instance=member)
+        return Response(
+            {
+                'data': serializer.data
+            },
+            status=status.HTTP_200_OK
+        )

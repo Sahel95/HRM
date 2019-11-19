@@ -7,6 +7,7 @@ from rest_framework.permissions import IsAuthenticated, AllowAny
 
 from django.core.paginator import Paginator
 from django.db.models import Q
+from collections import OrderedDict
 
 
 from kodus.serializer import *
@@ -17,13 +18,20 @@ from humanresource.settings import DAILY_MANAGER_KUDOS, DAILY_EMPLOYEE_KUDOS
 class KudosTransfer(APIView):
     def post(self, request):
         from_member = Members.objects.get(id=request.user.id)
-        serializer = KudosTransferSerializer(data=request.data, context={'from_member': from_member})
+        from_member_available_point = from_member.available_point - request.data['value']
+        serializer = KudosTransferSerializer(data=request.data, context={
+            'from_member': from_member,
+            'from_member_available_point': from_member_available_point,
+            'description': request.data['description']
+
+        })
         if serializer.is_valid():
             u = Members.objects.get(id=request.user.id)
             x = int(float(request.data['value']))
+
             if u.available_point >= x:
                 serializer.save()
-                from_member.available_point = from_member.available_point - request.data['value']
+                from_member.available_point = from_member_available_point
                 from_member.save()
                 return Response(
                     {'message': 'Kudos Sent!',
@@ -58,17 +66,40 @@ class MemberKudosView(APIView):
         )
 
 
+class MemberAvailablePointView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        member = Members.objects.get(id=request.user.id)
+        serializer = MemberAvailablePointSerializer(instance=member)
+        return Response(
+            {
+                'data': serializer.data
+            },
+            status=status.HTTP_200_OK
+        )
+
+
 class KudosTransaction(APIView):
+    permission_classes = [IsAuthenticated]
+
     def get(self, request):
         data = request.GET
+        print(data)
         member = Members.objects.get(id=request.user.id)
         from_date = data.get('from_date', member.date_joined.date())
         to_date = data.get('to_date', date.today())
         kudos = Kudos.objects.filter(
             Q(to_member=member.id) | Q(from_member=member.id),
             date__range=[from_date, to_date]
-        )
+        ).order_by('-date', '-time')
         serializer = KudosTransactionSerializer(instance=kudos, many=True)
+        page_size = len(serializer.data) / 10
+        for item in serializer.data:
+            if item['to_member']['id'] == member.id:
+                item['from_member_available_point'] = ' '
+            else:
+                item['to_member_kudos'] = ' '
         paginator = Paginator(serializer.data, 10)
         page = data['page']
         result = paginator.get_page(page)
@@ -76,7 +107,9 @@ class KudosTransaction(APIView):
             {
                 'page': data['page'],
                 'count': 10,
+                'page_size': page_size,
                 'data': result.object_list
+
             },
             status=status.HTTP_200_OK
         )
@@ -97,6 +130,15 @@ class AddDailyKudos(APIView):
                 elif r.role == 1:
                     member.available_point = member.available_point + DAILY_MANAGER_KUDOS
                     member.save()
+
+                # k = Kudos(
+                #     from_member=Members.objects.get(id=1),
+                #     to_member=m,
+                #     value=DAILY_EMPLOYEE_KUDOS,
+                #     from_member_available_point=" ",
+                #     to_member_kudos=to_member_kudos
+                # )
+
         return Response(
             {'message': ' Kudos Donated! '},
             status=status.HTTP_200_OK
@@ -122,4 +164,28 @@ class ViewMemberKudosByManagerView(APIView):
         )
 
 
+class DashboardKudosTransaction(APIView):
+    def get(self, request):
+        data = request.GET
+        member = Members.objects.get(pk=request.user.id)
+        kudos = Kudos.objects.filter(
+            to_member=member.id
+        ).order_by('-date', '-time')
+        serializer = KudosTransactionSerializer(instance=kudos, many=True)
+        for item in serializer.data:
+            if item['to_member']['id'] == member.id:
+                item['from_member_available_point'] = ' '
+            else:
+                item['to_member_kudos'] = ' '
+        paginator = Paginator(serializer.data, 10)
+        page = data['page']
+        result = paginator.get_page(page)
+        return Response(
+            {
+                'page': page,
+                'count': 10,
+                'data': result.object_list
 
+            },
+            status=status.HTTP_200_OK
+        )
