@@ -8,6 +8,7 @@ class Position(enum.Enum):
     FRONTEND_DEVELOPER = 0
     BACKEND_DEVELOPER = 1
     PROJECT_MANAGER = 2
+    DEVOPS = 3
 
 
 class Rules(enum.Enum):

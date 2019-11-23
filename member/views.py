@@ -6,6 +6,8 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status, viewsets
 
+
+from django.contrib.auth.hashers import check_password
 from .serializer import *
 from .models import *
 
@@ -236,3 +238,43 @@ class LogedInUserDetail(APIView):
             },
             status=status.HTTP_200_OK
         )
+
+
+class ChangePassword(APIView):
+    def post(self, request):
+        data = request.data
+        member = Members.objects.get(id=request.user.id)
+        serializer = ChangePasswordSerializer(data=data, context={"member":member})
+        if check_password(data['current_password'], request.user.password):
+            if data['new_password'] == data['renter_password']:
+                if serializer.is_valid():
+                    serializer.save()
+                    return Response(
+                        {
+                            'data':'password is changed!'
+                        },
+                        status=status.HTTP_200_OK
+                    )
+                else:
+                    return Response(
+                        {
+                            'error': 'serializer is NOT valid!'
+                        },
+                        status=status.HTTP_400_BAD_REQUEST
+                    )
+
+            else:
+                return Response(
+                    {
+                        'error': 'renter password is NOT match'
+                    },
+                    status=status.HTTP_400_BAD_REQUEST
+                )
+
+        else:
+            return Response(
+                {
+                    'error' :"current password is NOT valid!"
+                },
+                status=status.HTTP_400_BAD_REQUEST
+            )

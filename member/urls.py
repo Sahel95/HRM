@@ -8,5 +8,6 @@ urlpatterns = [
     path('login/', LoginView.as_view()),
     path('manager-teams/', TeamOfManagerView.as_view()),
     path('kudos-receptor/', MemberForKudosTransfer.as_view()),
-    path('detail/', LogedInUserDetail.as_view())
+    path('detail/', LogedInUserDetail.as_view()),
+    path('change-password/', ChangePassword.as_view())
 ]

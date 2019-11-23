@@ -84,3 +84,17 @@ class MemberShipSerializer(serializers.ModelSerializer):
     class Meta:
         model = Membership
         fields = '__all__'
+
+
+class ChangePasswordSerializer(serializers.Serializer):
+    def update(self, instance, validated_data):
+        pass
+
+    current_password = serializers.CharField(max_length=255)
+    renter_password = serializers.CharField(max_length=255)
+    new_password = serializers.CharField(max_length=255)
+
+    def create(self, validated_data):
+        self.context['member'].set_password(validated_data['new_password'])
+        self.context['member'].save()
+        return self.context['member']
