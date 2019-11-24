@@ -228,7 +228,7 @@ class MemberForKudosTransfer(APIView):
         )
 
 
-class LogedInUserDetail(APIView):
+class LoggedInUserDetail(APIView):
     def get(self, request):
         member = Members.objects.get(id=request.user.id)
         serializer = LoggedInUserDetailSerializer(instance=member)

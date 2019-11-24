@@ -6,7 +6,7 @@ from member.models import *
 class LoggedInUserDetailSerializer(serializers.ModelSerializer):
     class Meta:
         model = Members
-        fields = ['id', 'kudos', 'available_point', 'kpi_rate', 'first_name', 'last_name', 'position']
+        fields = ['id', 'kudos', 'available_point', 'kpi_rate', 'first_name', 'last_name', 'position', 'tel', 'national_code' , 'email', 'username']
 
 
 class KudosReceptorSerializer(serializers.ModelSerializer):
