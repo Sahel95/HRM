@@ -2,6 +2,12 @@
 
 # Created by https://www.gitignore.io/api/macos,linux,django,python,pycharm
 
+
+#cron jon
+daily_kudos.sh
+
+
+
 ### Django ###
 *.log
 *.pot

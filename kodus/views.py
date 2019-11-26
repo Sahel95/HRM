@@ -116,6 +116,8 @@ class KudosTransaction(APIView):
 
 
 class AddDailyKudos(APIView):
+    permission_classes = [AllowAny]
+
     def get(self, request):
 
         members = Members.objects.all()
