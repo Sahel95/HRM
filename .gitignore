@@ -5,8 +5,7 @@
 
 #cron jon
 daily_kudos.sh
-
-
+./humanresource/settings_local.py
 
 ### Django ###
 *.log

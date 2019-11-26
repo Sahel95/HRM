@@ -218,7 +218,11 @@ class MemberForKudosTransfer(APIView):
 
     # read member
     def get(self, request):
+        # logged_in_member=Members.objects.get(id=request.user.id)
         members = Members.objects.all()
+        member = Members.objects.get(id=request.user.id)
+        print(member)
+        # test = members.objects.exclude()
         serializer = KudosReceptorSerializer(instance=members, many=True)
         return Response(
             {
