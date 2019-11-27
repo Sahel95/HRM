@@ -17,9 +17,9 @@ class Rules(enum.Enum):
 
 
 class Members(User):
-    national_code = models.IntegerField(null=True, blank=True)
-    position = enum.EnumField(Position, default=Position.FRONTEND_DEVELOPER)
-    tel = models.IntegerField(null=True, blank=True)
+    national_code = models.CharField(max_length=10, blank=False)
+    position = enum.EnumField(Position, default=Position.FRONTEND_DEVELOPER, blank=False)
+    mobile_number = models.CharField(max_length=11, blank=False)
     kudos = models.IntegerField(default=0)
     available_point = models.IntegerField(default=0)
     kpi_rate = models.IntegerField(default=0)

@@ -6,7 +6,7 @@ from member.models import *
 class LoggedInUserDetailSerializer(serializers.ModelSerializer):
     class Meta:
         model = Members
-        fields = ['id', 'kudos', 'available_point', 'kpi_rate', 'first_name', 'last_name', 'position', 'tel', 'national_code' , 'email', 'username']
+        fields = ['id', 'kudos', 'available_point', 'kpi_rate', 'first_name', 'last_name', 'position', '', 'national_code' , 'email', 'username']
 
 
 class KudosReceptorSerializer(serializers.ModelSerializer):
@@ -30,16 +30,16 @@ class ReadMemberSerializer(serializers.ModelSerializer):
 class AddMemberSerializer(serializers.ModelSerializer):
     class Meta:
         model = Members
-        fields = ['national_code', 'first_name', 'last_name', 'tel', 'position']
+        fields = ['national_code', 'first_name', 'last_name', 'mobile_number', 'position', 'username']
 
     def create(self, validated_data):
         m = Members(
             first_name=validated_data['first_name'],
             last_name=validated_data['last_name'],
-            tel=validated_data['tel'],
+            mobile_number=validated_data['mobile_number'],
             position=validated_data['position'],
             national_code=validated_data['national_code'],
-            username=validated_data['national_code']
+            username=validated_data['username']
         )
         m.set_password(validated_data['national_code'])
         m.save()
@@ -49,11 +49,11 @@ class AddMemberSerializer(serializers.ModelSerializer):
 class EditMemberDataSerializer(serializers.ModelSerializer):
     class Meta:
         model = Members
-        fields = ['position', 'tel', 'email', 'id']
+        fields = ['position', 'mobile_number', 'email', 'id']
 
     def update(self, instance, validated_data):
         instance.position = validated_data.get('position', instance.position)
-        instance.tel = validated_data.get('tel', instance.tel)
+        instance.mobile_number = validated_data.get('mobile_number', instance.mobile_number)
         instance.email = validated_data.get('email', instance.email)
         instance.save()
         return instance

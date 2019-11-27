@@ -22,17 +22,17 @@ from kodus.views import KudosViewSet
 from member.views import MembersCrudViewSet, TeamsCrudViewSet, MemberShipViewSet
 
 router = routers.DefaultRouter()
-router.register('system/kudos', KudosViewSet)
-router.register('members', MembersCrudViewSet)
-router.register('teams', TeamsCrudViewSet)
-router.register('membership', MemberShipViewSet)
+router.register('api/v1/system/kudos', KudosViewSet)
+router.register('api/v1/members', MembersCrudViewSet)
+router.register('api/v1/teams', TeamsCrudViewSet)
+router.register('api/v1/membership', MemberShipViewSet)
 
 urlpatterns = [
     url(r'^', include(router.urls)),
     # url(r'^api-auth/', include('rest_framework.urls')),
     path('admin/', admin.site.urls),
-    path('kudos/', include('kodus.urls')),
-    path('kpi/', include('kpi.urls')),
-    path('member/', include('member.urls')),
+    path('api/v1/kudos/', include('kodus.urls')),
+    path('api/v1/kpi/', include('kpi.urls')),
+    path('api/v1/member/', include('member.urls')),
     # path(r'',include('kodus.urls'))
 ]

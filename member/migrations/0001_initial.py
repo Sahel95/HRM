@@ -23,7 +23,7 @@ class Migration(migrations.Migration):
                 ('user_ptr', models.OneToOneField(auto_created=True, on_delete=django.db.models.deletion.CASCADE, parent_link=True, primary_key=True, serialize=False, to=settings.AUTH_USER_MODEL)),
                 ('national_code', models.IntegerField(blank=True, null=True)),
                 ('position', django_enumfield.db.fields.EnumField(default=0, enum=member.models.Position)),
-                ('tel', models.IntegerField(blank=True, null=True)),
+                ('mobile', models.IntegerField(blank=True, null=True)),
                 ('kudos', models.IntegerField(default=0)),
                 ('available_point', models.IntegerField(default=0)),
                 ('kpi_rate', models.IntegerField(default=0)),
