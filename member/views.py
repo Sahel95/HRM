@@ -219,11 +219,17 @@ class MemberForKudosTransfer(APIView):
     # read member
     def get(self, request):
         # logged_in_member=Members.objects.get(id=request.user.id)
-        members = Members.objects.all()
+        # members = Members.objects.all()
         member = Members.objects.get(id=request.user.id)
-        print(member)
-        # test = members.objects.exclude()
+        members = Members.objects.exclude(id=request.user.id)
         serializer = KudosReceptorSerializer(instance=members, many=True)
+        # for item in serializer.data:
+        #     if item['id'] == member.id:
+        #         print(item)
+        #         print(len(serializer.data))
+        #         del item
+        #         print(len(serializer.data))
+
         return Response(
             {
                 'data': serializer.data
@@ -270,7 +276,7 @@ class ChangePassword(APIView):
             else:
                 return Response(
                     {
-                        'error': 'renter password is NOT match'
+                        'error': 'تکرار رمز عبور صحیح نیست !'
                     },
                     status=status.HTTP_400_BAD_REQUEST
                 )
@@ -278,7 +284,7 @@ class ChangePassword(APIView):
         else:
             return Response(
                 {
-                    'error' :"current password is NOT valid!"
+                    'error': "رمز عبور فعلی صحیح نیست !"
                 },
                 status=status.HTTP_400_BAD_REQUEST
             )

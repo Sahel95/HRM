@@ -24,7 +24,7 @@ SECRET_KEY = '#b$y8ypwca7+99(e)nt9kb0&+xul)-_2y&ho_mv$6_amo%2zt('
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ["hrm.aban.io"]
+ALLOWED_HOSTS = ["hrm.aban.io", "127.0.0.1"]
 
 
 # Application definition
