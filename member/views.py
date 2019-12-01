@@ -207,11 +207,7 @@ class TeamsView(APIView):
                 },
                 status=status.HTTP_400_BAD_REQUEST
             )
-    def put(self, request):
-        pass
 
-    def delete(self, request):
-        pass
 
 
 class MemberForKudosTransfer(APIView):
