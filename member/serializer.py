@@ -31,16 +31,18 @@ class ReadMemberSerializer(serializers.ModelSerializer):
 class AddMemberSerializer(serializers.ModelSerializer):
     class Meta:
         model = Members
-        fields = ['national_code', 'first_name', 'last_name', 'mobile_number', 'position', 'username']
+        fields = ['national_code', 'first_name', 'last_name', 'mobile_number', 'position', 'username', 'email']
 
     def create(self, validated_data):
+        print(validated_data)
         m = Members(
             first_name=validated_data['first_name'],
             last_name=validated_data['last_name'],
             mobile_number=validated_data['mobile_number'],
             position=validated_data['position'],
             national_code=validated_data['national_code'],
-            username=validated_data['username']
+            username=validated_data['username'],
+            email=validated_data['email']
         )
         m.set_password(validated_data['national_code'])
         m.save()
