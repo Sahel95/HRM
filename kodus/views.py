@@ -19,36 +19,42 @@ class KudosTransfer(APIView):
     def post(self, request):
         from_member = Members.objects.get(id=request.user.id)
         from_member_available_point = from_member.available_point - request.data['value']
-        serializer = KudosTransferSerializer(data=request.data, context={
-            'from_member': from_member,
-            'from_member_available_point': from_member_available_point,
-            'description': request.data['description']
+        data = request.data
+        if data['value'] == 0:
+            serializer = KudosTransferSerializer(data=data, context={
+                'from_member': from_member,
+                'from_member_available_point': from_member_available_point,
+                'description': request.data['description']
 
-        })
-        if serializer.is_valid():
-            u = Members.objects.get(id=request.user.id)
-            x = int(float(request.data['value']))
+            })
+            if serializer.is_valid():
+                u = Members.objects.get(id=request.user.id)
+                x = int(float(request.data['value']))
 
-            if u.available_point >= x:
-                serializer.save()
-                from_member.available_point = from_member_available_point
-                from_member.save()
-                return Response(
-                    {'message': 'Kudos Sent!',
-                     # 'data': serializer.data
-                     },
-                    status=status.HTTP_201_CREATED
-                )
+                if u.available_point >= x:
+                    serializer.save()
+                    from_member.available_point = from_member_available_point
+                    from_member.save()
+                    return Response(
+                        {'message': 'Kudos Sent!',
+                         # 'data': serializer.data
+                         },
+                        status=status.HTTP_201_CREATED
+                    )
+                else:
+                    return Response(
+                        {'error': 'موجودی شما کافی نیست !'},
+                        status=status.HTTP_400_BAD_REQUEST
+                    )
+
             else:
                 return Response(
-                    {'message': 'You have NOT enough kudos'},
+                    {'error': 'Serializer in NOT valid!'},
                     status=status.HTTP_400_BAD_REQUEST
                 )
-
         else:
             return Response(
-                {'message': 'Serializer in NOT valid!'},
-                status=status.HTTP_400_BAD_REQUEST
+                {'error': 'حداقل سقف جابجایی 1 کودوس است !'}
             )
 
 
