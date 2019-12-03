@@ -23,7 +23,8 @@ class KudosTransfer(APIView):
         description = data.get('description', " ")
         if data['value'] == 0:
             return Response(
-                {'error': 'حداقل سقف جابجایی 1 کودوس است !'}
+                {'error': 'حداقل سقف جابجایی 1 کودوس است !'},
+                status=status.HTTP_400_BAD_REQUEST
             )
         else:
 
