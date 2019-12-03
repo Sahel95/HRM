@@ -76,7 +76,7 @@ class LoginView(APIView):
                 {
                     'error': 'Invalid Credentials'
                 },
-                status=status.HTTP_404_NOT_FOUND)
+                status=status.HTTP_401_UNAUTHORIZED)
         token, _ = Token.objects.get_or_create(user=user)
         return Response(
             {

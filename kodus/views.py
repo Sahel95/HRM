@@ -20,45 +20,52 @@ class KudosTransfer(APIView):
         from_member = Members.objects.get(id=request.user.id)
         from_member_available_point = from_member.available_point - request.data['value']
         data = request.data
+        to_member = Members.objects.get(id=data['to_member'])
         description = data.get('description', " ")
-        if data['value'] == 0:
+        if to_member.id == request.user.id:
             return Response(
-                {'error': 'حداقل سقف جابجایی 1 کودوس است !'},
+                {'error': 'شما مجاز به ارسال کودس به خودتون نیستید!'},
                 status=status.HTTP_400_BAD_REQUEST
             )
         else:
-
-            serializer = KudosTransferSerializer(data=data, context={
-                'from_member': from_member,
-                'from_member_available_point': from_member_available_point,
-                'description': description
-
-            })
-            if serializer.is_valid():
-                u = Members.objects.get(id=request.user.id)
-                x = int(float(request.data['value']))
-
-                if u.available_point >= x:
-                    serializer.save()
-                    from_member.available_point = from_member_available_point
-                    from_member.save()
-                    return Response(
-                        {'message': 'Kudos Sent!',
-                         # 'data': serializer.data
-                         },
-                        status=status.HTTP_201_CREATED
-                    )
-                else:
-                    return Response(
-                        {'error': 'موجودی شما کافی نیست !'},
-                        status=status.HTTP_400_BAD_REQUEST
-                    )
-
-            else:
+            if data['value'] == 0:
                 return Response(
-                    {'error': 'Serializer in NOT valid!'},
+                    {'error': 'حداقل سقف جابجایی 1 کودوس است !'},
                     status=status.HTTP_400_BAD_REQUEST
                 )
+            else:
+
+                serializer = KudosTransferSerializer(data=data, context={
+                    'from_member': from_member,
+                    'from_member_available_point': from_member_available_point,
+                    'description': description
+
+                })
+                if serializer.is_valid():
+                    u = Members.objects.get(id=request.user.id)
+                    x = int(float(request.data['value']))
+
+                    if u.available_point >= x:
+                        serializer.save()
+                        from_member.available_point = from_member_available_point
+                        from_member.save()
+                        return Response(
+                            {'message': 'Kudos Sent!',
+                             # 'data': serializer.data
+                             },
+                            status=status.HTTP_201_CREATED
+                        )
+                    else:
+                        return Response(
+                            {'error': 'موجودی شما کافی نیست !'},
+                            status=status.HTTP_400_BAD_REQUEST
+                        )
+
+                else:
+                    return Response(
+                        {'error': 'Serializer in NOT valid!'},
+                        status=status.HTTP_400_BAD_REQUEST
+                    )
 
 
 class MemberKudosView(APIView):
