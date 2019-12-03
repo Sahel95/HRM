@@ -20,11 +20,17 @@ class KudosTransfer(APIView):
         from_member = Members.objects.get(id=request.user.id)
         from_member_available_point = from_member.available_point - request.data['value']
         data = request.data
+        description = data.get('description', " ")
         if data['value'] == 0:
+            return Response(
+                {'error': 'حداقل سقف جابجایی 1 کودوس است !'}
+            )
+        else:
+
             serializer = KudosTransferSerializer(data=data, context={
                 'from_member': from_member,
                 'from_member_available_point': from_member_available_point,
-                'description': request.data['description']
+                'description': description
 
             })
             if serializer.is_valid():
@@ -52,10 +58,6 @@ class KudosTransfer(APIView):
                     {'error': 'Serializer in NOT valid!'},
                     status=status.HTTP_400_BAD_REQUEST
                 )
-        else:
-            return Response(
-                {'error': 'حداقل سقف جابجایی 1 کودوس است !'}
-            )
 
 
 class MemberKudosView(APIView):
