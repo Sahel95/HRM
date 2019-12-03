@@ -9,7 +9,7 @@ from datetime import datetime
 
 class KudosTransferSerializer (serializers.Serializer):
     to_member = serializers.IntegerField(min_value=1)
-    value = serializers.IntegerField(min_value=1)
+    value = serializers.IntegerField(min_value=0)
 
     def create(self, validated_data):
         to_member = Members.objects.get(id=validated_data['to_member'])
