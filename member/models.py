@@ -11,6 +11,7 @@ class Position(enum.Enum):
     DEVOPS = 3
 
 
+
 class Rules(enum.Enum):
     EMPLOYEE = 0
     MANAGER = 1

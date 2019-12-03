@@ -230,9 +230,18 @@ class LoggedInUserDetail(APIView):
     def get(self, request):
         member = Members.objects.get(id=request.user.id)
         serializer = LoggedInUserDetailSerializer(instance=member)
+        position_list = [
+            "Frontend Developer",
+            "Backend Developer",
+            "Project Manager",
+            "Devops"
+        ]
+        position = position_list[member.position]
         return Response(
             {
-                'data': serializer.data
+                'data': serializer.data,
+                'position': position
+
             },
             status=status.HTTP_200_OK
         )
