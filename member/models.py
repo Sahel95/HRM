@@ -5,10 +5,9 @@ from datetime import date
 
 
 class Position(enum.Enum):
-    FRONTEND_DEVELOPER = 0
-    BACKEND_DEVELOPER = 1
-    PROJECT_MANAGER = 2
-    DEVOPS = 3
+    DEVELOPER = 0
+    PMO = 1
+    DEVOPS = 2
 
 
 

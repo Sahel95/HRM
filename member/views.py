@@ -231,9 +231,8 @@ class LoggedInUserDetail(APIView):
         member = Members.objects.get(id=request.user.id)
         serializer = LoggedInUserDetailSerializer(instance=member)
         position_list = [
-            "Frontend Developer",
-            "Backend Developer",
-            "Project Manager",
+            "Developer",
+            "PMO",
             "Devops"
         ]
         position = position_list[member.position]
