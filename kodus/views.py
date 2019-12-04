@@ -21,7 +21,6 @@ class KudosTransfer(APIView):
         from_member_available_point = from_member.available_point - request.data['value']
         data = request.data
         to_member = Members.objects.get(id=data['to_member'])
-        description = data.get('description', " ")
         if to_member.id == request.user.id:
             return Response(
                 {'error': 'شما مجاز به ارسال کودس به خودتون نیستید!'},
@@ -38,8 +37,6 @@ class KudosTransfer(APIView):
                 serializer = KudosTransferSerializer(data=data, context={
                     'from_member': from_member,
                     'from_member_available_point': from_member_available_point,
-                    'description': description
-
                 })
                 if serializer.is_valid():
                     u = Members.objects.get(id=request.user.id)

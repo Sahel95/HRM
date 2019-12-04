@@ -11,5 +11,5 @@ class Kudos (models.Model):
     value = models.IntegerField()
     from_member_available_point = models.IntegerField()
     to_member_kudos = models.IntegerField()
-    description = models.CharField(max_length=100, null=True, blank=True)
+    description = models.CharField(max_length=100)
     # to_member_available

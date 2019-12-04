@@ -10,6 +10,7 @@ from datetime import datetime
 class KudosTransferSerializer (serializers.Serializer):
     to_member = serializers.IntegerField(min_value=1)
     value = serializers.IntegerField(min_value=0)
+    description = serializers.CharField(max_length=100)
 
     def create(self, validated_data):
         to_member = Members.objects.get(id=validated_data['to_member'])
@@ -21,7 +22,7 @@ class KudosTransferSerializer (serializers.Serializer):
             value=validated_data['value'],
             from_member_available_point=self.context['from_member_available_point'],
             to_member_kudos=to_member_kudos,
-            description=self.context['description']
+            description=validated_data['description']
             )
         k.save()
         to_member.save()
