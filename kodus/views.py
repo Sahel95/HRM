@@ -101,34 +101,41 @@ class KudosTransaction(APIView):
 
     def get(self, request):
         data = request.GET
-        print(data)
         member = Members.objects.get(id=request.user.id)
         from_date = data.get('from_date', member.date_joined.date())
         to_date = data.get('to_date', date.today())
-        kudos = Kudos.objects.filter(
-            Q(to_member=member.id) | Q(from_member=member.id),
-            date__range=[from_date, to_date]
-        ).order_by('-date', '-time')
-        serializer = KudosTransactionSerializer(instance=kudos, many=True)
-        page_size = len(serializer.data) / 10
-        for item in serializer.data:
-            if item['to_member']['id'] == member.id:
-                item['from_member_available_point'] = ' '
-            else:
-                item['to_member_kudos'] = ' '
-        paginator = Paginator(serializer.data, 10)
-        page = data['page']
-        result = paginator.get_page(page)
-        return Response(
-            {
-                'page': data['page'],
-                'count': 10,
-                'page_size': page_size,
-                'data': result.object_list
+        if (from_date < to_date):
+            kudos = Kudos.objects.filter(
+                Q(to_member=member.id) | Q(from_member=member.id),
+                date__range=[from_date, to_date]
+            ).order_by('-date', '-time')
+            serializer = KudosTransactionSerializer(instance=kudos, many=True)
+            page_size = len(serializer.data) / 10
+            for item in serializer.data:
+                if item['to_member']['id'] == member.id:
+                    item['from_member_available_point'] = ' '
+                else:
+                    item['to_member_kudos'] = ' '
+            paginator = Paginator(serializer.data, 10)
+            page = data['page']
+            result = paginator.get_page(page)
+            return Response(
+                {
+                    'page': data['page'],
+                    'count': 10,
+                    'page_size': page_size,
+                    'data': result.object_list
 
-            },
-            status=status.HTTP_200_OK
-        )
+                },
+                status=status.HTTP_200_OK
+            )
+        else:
+            return Response(
+                {
+                    'error': 'تاریخ وارد شده صحیح نمیباشد!'
+                },
+                status=status.HTTP_400_BAD_REQUEST
+            )
 
 
 class AddDailyKudos(APIView):
